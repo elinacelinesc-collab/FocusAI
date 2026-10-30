@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusVillain - Login Test</title>
+    <style>
+        body { background-color: #1a1a2e; color: white; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .login-box { background: #1e1e2f; padding: 30px; border-radius: 15px; width: 300px; margin: auto; border: 1px solid #3b3b5c; }
+        button { background: #8a2be2; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 20px; width: 100%; }
+        button:hover { background: #6a1b9a; }
+        button.secondary { background: transparent; border: 1px solid #8a2be2; margin-top: 10px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>FocusVillain Login</h2>
+        <p>Test Firebase Connection</p>
+        <button id="googleBtn">Sign in with Google</button>
+        <hr style="margin: 20px 0; border-color: #3b3b5c;">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password (min 6 chars)">
+        <button id="emailBtn">Login with Email</button>
+        <button id="signupBtn" class="secondary">Create account</button>
+        <p id="status" style="color: #00ffcc; margin-top: 15px;"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBe0ia1FGw2poDTonlXi0V2LvRQGwi8CX4",
+            authDomain: "focusai-7fe3c.firebaseapp.com",
+            projectId: "focusai-7fe3c",
+            storageBucket: "focusai-7fe3c.firebasestorage.app",
+            messagingSenderId: "761646577346",
+            appId: "1:761646577346:web:42d5c1b2bd9fd8fe846d5b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        const status = document.getElementById('status');
+
+        document.getElementById('googleBtn').addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    status.innerText = `Success! Hi, ${result.user.displayName} (${result.user.email})`;
+                    // Next: go to the main app from here
+                }).catch((error) => {
+                    status.innerText = "Error: " + error.message;
+                });
+        });
+
+        document.getElementById('emailBtn').addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((cred) => {
+                    status.innerText = `Success! Logged in as ${cred.user.email}`;
+                }).catch((error) => {
+                    status.innerText = "Error: " + error.message;
+                });
+        });
+
+        document.getElementById('signupBtn').addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((cred) => {
+                    status.innerText = `Account created: ${cred.user.email}`;
+                }).catch((error) => {
+                    status.innerText = "Error: " + error.message;
+                });
+        });
+    </script>
+</body>
+</html>
